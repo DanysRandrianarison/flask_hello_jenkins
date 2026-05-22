@@ -1,8 +1,8 @@
 pipeline {
-    agent {
-        kubernetes {
-            label 'jenkins-agent-my-app'
-            yaml """
+  agent {
+    kubernetes {
+      label 'jenkins-agent-my-app'
+      yaml '''
 apiVersion: v1
 kind: Pod
 metadata:
@@ -32,40 +32,43 @@ spec:
   - name: docker-sock
     hostPath:
       path: /var/run/docker.sock
-"""
-        }
+'''
     }
 
-    triggers {
-        pollSCM('* * * * *')
+  }
+  stages {
+    stage('Test python') {
+      steps {
+        container(name: 'python') {
+          sh 'pip install -r requirements.txt'
+          sh 'python test.py'
+        }
+
+      }
     }
 
-    stages {
-        stage('Test python') {
-            steps {
-                container('python') {
-                    sh "pip install -r requirements.txt"
-                    sh "python test.py"
-                }
-            }
+    stage('Build image') {
+      steps {
+        container(name: 'docker') {
+          sh 'docker build -t localhost:4000/pythontest:latest .'
+          sh 'docker push localhost:4000/pythontest:latest'
         }
 
-        stage('Build image') {
-            steps {
-                container('docker') {
-                    sh "docker build -t localhost:4000/pythontest:latest ."
-                    sh "docker push localhost:4000/pythontest:latest"
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                container('kubectl') {
-                    sh "kubectl apply -f ./kubernetes/deployment.yaml"
-                    sh "kubectl apply -f ./kubernetes/service.yaml"
-                }
-            }
-        }
+      }
     }
+
+    stage('Deploy') {
+      steps {
+        container(name: 'kubectl') {
+          sh 'kubectl apply -f ./kubernetes/deployment.yaml'
+          sh 'kubectl apply -f ./kubernetes/service.yaml'
+        }
+
+      }
+    }
+
+  }
+  triggers {
+    pollSCM('* * * * *')
+  }
 }
