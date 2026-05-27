@@ -60,7 +60,7 @@ spec:
           sh 'docker push localhost:4000/pythontest:latest'
         }
 
-<<<<<<< HEAD
+
          stage('Build image') {
              steps {
                  container('docker') {
