@@ -15,19 +15,19 @@ spec:
     command:
     - cat
     tty: true
-//   - name: docker
-//     image: docker
-//     command:
-//     - cat
-//     tty: true
-//     volumeMounts:
-//     - mountPath: /var/run/docker.sock
-//       name: docker-sock
-//   - name: kubectl
-//     image: lachlanevenson/k8s-kubectl:v1.17.2
-//     command:
-//     - cat
-//     tty: true
+   - name: docker
+     image: docker
+     command:
+     - cat
+     tty: true
+     volumeMounts:
+     - mountPath: /var/run/docker.sock
+       name: docker-sock
+   - name: kubectl
+     image: lachlanevenson/k8s-kubectl:v1.17.2
+     command:
+     - cat
+     tty: true
   volumes:
   - name: docker-sock
     hostPath:
