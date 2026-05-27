@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pythontest
+  labels:
+    app: pythontest
+spec:
+  selector:
+    matchLabels:
+      app: pythontest
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pythontest
+    spec:
+      containers:
+      - image: localhost:4000/pythontest:latest
+        name: pythontest
+        ports:
+        - containerPort: 5000
+          name: microport
+
+--- kubernetes/service.yaml ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pythontest
+  labels:
+    app: pythontest
+spec:
+  ports:
+  - port: 5000
+    nodePort: 31000
+  selector:
+    app: pythontest
+  type: NodePort
