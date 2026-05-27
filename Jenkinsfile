@@ -36,9 +36,9 @@ spec:
     }
 
 <<<<<<< HEAD
-    // triggers {
-    //     pollSCM('* * * * *')
-    // }
+     triggers {
+         pollSCM('* * * * *')
+     }
 =======
   }
   stages {
